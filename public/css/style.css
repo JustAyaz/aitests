@@ -1,0 +1,121 @@
+body {
+  background-color: #eef7fd;
+  overflow-y: hidden;
+}
+.nav {
+  margin-bottom: 1rem;
+}
+table.calendar {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+table.calendar th,
+table.calendar td {
+  border: 1px solid #dee2e6;
+  text-align: center;
+  padding: 0.25rem;
+  font-size: .8rem;
+  vertical-align: middle;
+}
+table.calendar th {
+  background-color: #cfe2ff;
+}
+table.calendar td.slot {
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: calc((100vh - 230px)/19);
+  padding: 2px 0;
+}
+table.calendar th.time-col,
+table.calendar td.time-col {
+  white-space: nowrap;
+  width: 120px;
+}
+table.calendar td.info-col {
+  width: 25px;
+  vertical-align: middle;
+  cursor: pointer;
+  padding: 0;
+}
+table.calendar td.slot .count {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #000;
+}
+table.calendar td.slot:hover {
+  filter: brightness(0.95);
+}
+table.calendar td.slot.rule-select {
+  outline: 2px dashed #198754;
+}
+table.calendar td.slot.has-note {
+  min-height: calc((100vh - 230px)/19 + 20px);
+}
+table.calendar td.slot .note {
+  width: 100%;
+  border-top: 1px solid #dee2e6;
+  font-size: 0.7rem;
+  color: #0f5132;
+  padding-top: 2px;
+  margin-top: auto;
+}
+
+.rule-bar {
+  position: absolute;
+  display: none;
+  z-index: 1000;
+  max-width: 220px;
+}
+
+table.days {
+  width: 100%;
+  table-layout: fixed;
+}
+table.days th.day-header {
+  background-color: #b6d4fe;
+  text-align: center;
+  font-weight: bold;
+}
+table.days td.day {
+  cursor: pointer;
+  border: 1px solid #dee2e6;
+  background-color: #cfe2ff;
+  position: relative;
+  height: calc((100vh - 230px)/4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+table.days td.day .day-info {
+  font-weight: bold;
+}
+table.days td.day .day-count {
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+table.days td.day.has-rule {
+  background-color: #8fbc8f;
+}
+
+@media (max-width: 576px) {
+  table.days td.day {
+    height: 70px;
+    font-size: 0.75rem;
+  }
+  table.calendar th,
+  table.calendar td {
+    font-size: 0.75rem;
+  }
+  table.calendar td.slot.has-note {
+    min-height: 60px;
+  }
+}
