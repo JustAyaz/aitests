@@ -57,9 +57,6 @@ get '/calendar' do
   @start_week = date.beginning_of_week
   @prev_week = @start_week - 7
   @next_week = @start_week + 7
-  @slots = Slot.includes(:users).where(time: @start_week..(@start_week + 7)).order(:time)
-  @slot_hash = @slots.index_by { |s| s.time }
-
   erb :calendar
 end
 
@@ -71,7 +68,8 @@ post '/slots/:id/toggle' do
   else
     slot.users << current_user
   end
-  redirect '/calendar'
+  content_type :json
+  { success: true }.to_json
 end
 
 get '/api/slots' do
@@ -79,7 +77,14 @@ get '/api/slots' do
   date = params[:week] ? Date.parse(params[:week]) : Date.today
   start_week = date.beginning_of_week
   slots = Slot.includes(:users).where(time: start_week..(start_week + 7)).order(:time)
-
-  data = slots.map { |s| { id: s.id, time: s.time, count: s.users.size, users: s.users.map(&:name) } }
+  data = slots.map do |s|
+    {
+      id: s.id,
+      time: s.time,
+      count: s.users.size,
+      users: s.users.map(&:name),
+      selected: current_user ? s.users.include?(current_user) : false
+    }
+  end
   json data
 end
