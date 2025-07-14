@@ -18,6 +18,7 @@ table.calendar td {
   padding: 0.25rem;
   font-size: .8rem;
   vertical-align: middle;
+
   border-radius: 4px;
 }
 table.calendar th {
