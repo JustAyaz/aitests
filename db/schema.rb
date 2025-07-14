@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema[8.0].define(version: 4) do
   create_table "slots", force: :cascade do |t|
     t.datetime "time", null: false
