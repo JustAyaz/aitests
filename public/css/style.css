@@ -58,6 +58,7 @@ table.calendar td.slot.rule-select {
 table.calendar td.slot.has-note {
   min-height: calc((100vh - 170px)/19 + 20px);
 }
+
 table.calendar td.slot .note {
   width: 100%;
   border-top: 1px solid #dee2e6;
