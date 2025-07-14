@@ -72,6 +72,16 @@ post '/slots/:id/toggle' do
   { success: true }.to_json
 end
 
+
+post '/slots/set_rule' do
+  halt 401 unless current_user
+  ids = params[:slot_ids]
+  ids = JSON.parse(ids) if ids.is_a?(String)
+  Slot.where(id: ids).update_all(note: params[:note])
+  content_type :json
+  { success: true }.to_json
+end
+
 get '/api/slots' do
   content_type :json
   date = params[:week] ? Date.parse(params[:week]) : Date.today
@@ -83,7 +93,8 @@ get '/api/slots' do
       time: s.time,
       count: s.users.size,
       users: s.users.map(&:name),
-      selected: current_user ? s.users.include?(current_user) : false
+      selected: current_user ? s.users.include?(current_user) : false,
+      note: s.note
     }
   end
   json data

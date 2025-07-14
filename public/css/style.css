@@ -15,7 +15,8 @@ table.calendar td {
   border: 1px solid #dee2e6;
   text-align: center;
   padding: 0.25rem;
-  height: 60px;
+  height: calc((100vh - 230px)/20);
+  font-size: .8rem;
 }
 table.calendar th {
   background-color: #cfe2ff;
@@ -35,3 +36,17 @@ table.calendar td.slot .count {
 table.calendar td.slot:hover {
   filter: brightness(0.95);
 }
+table.calendar td.slot.rule-select {
+  outline: 2px dashed #198754;
+}
+table.calendar td.slot .note {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 0.7rem;
+  color: #0f5132;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

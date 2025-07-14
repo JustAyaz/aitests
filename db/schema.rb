@@ -10,11 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 3) do
+
+ActiveRecord::Schema[8.0].define(version: 4) do
   create_table "slots", force: :cascade do |t|
     t.datetime "time", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "note"
   end
 
   create_table "slots_users", id: false, force: :cascade do |t|
