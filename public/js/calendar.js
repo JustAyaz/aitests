@@ -9,7 +9,6 @@ createApp({
       ruleMode: false,
       ruleText: '',
       selectedForRule: [],
-      ruleBarPos: {top: 0, left: 0},
       extra: 0,
       dayView: null,
       infoSlot: null
@@ -31,9 +30,9 @@ createApp({
       });
     },
     times() {
-      const start = new Date(this.week);
-      start.setHours(15,0,0,0);
-      return Array.from({length:19}, (_,i)=>new Date(start.getTime()+i*1800000));
+      const base = this.dayView !== null ? new Date(this.days[this.dayView]) : new Date(this.week);
+      base.setHours(15,0,0,0);
+      return Array.from({length:19}, (_,i)=>new Date(base.getTime()+i*1800000));
     },
     monthLabel() {
       const start = new Date(this.week);
@@ -46,8 +45,7 @@ createApp({
       this.days.forEach((_,i)=>map[i]=[]);
       this.slots.forEach(s=>{
         const d = new Date(s.time);
-        let idx = Math.floor((d - this.getStartOfWeek()) / 86400000);
-        if(d.getHours() === 0 && d.getMinutes() === 0) idx -= 1;
+        const idx = Math.floor((d - this.getStartOfWeek()) / 86400000);
         if(idx >= 0 && map[idx] !== undefined) map[idx].push(s);
       });
       return map;
@@ -124,10 +122,6 @@ createApp({
         const idx = this.selectedForRule.indexOf(slot.id);
         if(idx>=0) this.selectedForRule.splice(idx,1);
         else this.selectedForRule.push(slot.id);
-        if(event) {
-          const rect = event.currentTarget.getBoundingClientRect();
-          this.ruleBarPos = {top: rect.bottom + 4, left: rect.right + 4};
-        }
       } else {
         this.toggleSlot(slot);
       }
@@ -166,7 +160,6 @@ createApp({
         this.ruleMode=false;
         this.selectedForRule=[];
         this.ruleText='';
-        this.ruleBarPos={top:0,left:0};
         this.loadSlots();
       });
     },
@@ -188,9 +181,7 @@ createApp({
     },
     ruleBarStyle() {
       return {
-        display: this.ruleMode && this.selectedForRule.length ? 'flex' : 'none',
-        top: this.ruleBarPos.top + 'px',
-        left: this.ruleBarPos.left + 'px'
+        display: this.ruleMode && this.selectedForRule.length ? 'flex' : 'none'
       };
     },
     showInfo(slot){

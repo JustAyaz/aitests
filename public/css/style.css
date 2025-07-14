@@ -1,6 +1,9 @@
 body {
   background-color: #eef7fd;
-  overflow-y: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 .nav {
   margin-bottom: 1rem;
@@ -18,7 +21,6 @@ table.calendar td {
   padding: 0.25rem;
   font-size: .8rem;
   vertical-align: middle;
-
   border-radius: 4px;
 }
 table.calendar th {
@@ -42,7 +44,7 @@ table.calendar td.time-col {
   width: 120px;
 }
 table.calendar td.info-col {
-  width: 15px;
+  width: 25px;
   vertical-align: middle;
   cursor: pointer;
   padding: 0;
@@ -73,13 +75,16 @@ table.calendar td.slot .note {
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   border-radius: 4px;
   padding: 4px;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .days-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: auto repeat(2, 1fr);
-  height: calc(100vh - 150px);
+  grid-template-rows: auto repeat(2, auto);
+  gap: 4px;
   width: 100%;
 }
 .days-grid .day-header {
@@ -95,6 +100,7 @@ table.calendar td.slot .note {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  aspect-ratio: 2 / 3;
   transition: background-color 0.3s ease, transform 0.2s ease;
   border-radius: 6px;
 }
@@ -119,7 +125,7 @@ table.calendar td.slot .note {
 
 @media (max-width: 576px) {
   .days-grid {
-    height: calc(100vh - 120px);
+    grid-template-rows: auto repeat(2, auto);
   }
   .day-view .slots-container {
     max-height: calc(100vh - 120px);
