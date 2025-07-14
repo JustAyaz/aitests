@@ -19,36 +19,42 @@
     <span class="input-group-text" v-if="selectedForRule.length">Avg: {{ selectedAvg }}</span>
   </div>
   <div v-if="dayView === null">
-    <table class="table table-bordered days">
-      <tbody>
-        <tr v-for="(weekDays,wi) in weeks">
-          <td v-for="(d,i) in weekDays" class="day" @click="openDay(wi*7+i)" :style="dayStyle(maxPerDay[wi*7+i])" :class="{'has-rule': maxPerDay[wi*7+i].note}">
-            <div class="position-relative">
-              <span class="day-label">{{ formatDay(d) }}</span>
-              <span class="count">{{ maxPerDay[wi*7+i].max }}</span>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-for="month in months" class="mb-2">
+      <h3 class="h6 text-center">{{ month.label }}</h3>
+      <table class="table table-bordered days">
+        <tbody>
+          <tr v-for="week in month.weeks">
+            <td v-for="day in week" class="day" @click="openDay(day.index)" :style="dayStyle(maxPerDay[day.index])" :class="{'has-rule': maxPerDay[day.index].note}">
+              <div class="day-info">{{ formatDay(day.date) }}</div>
+              <div class="day-count">{{ maxPerDay[day.index].max }}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div v-else>
     <button class="btn btn-sm btn-outline-secondary mb-2" @click="closeDay">&laquo; Back</button>
     <table class="table table-bordered calendar">
       <thead>
         <tr>
-          <th>Time</th>
+          <th class="time-col">Time</th>
           <th>{{ formatDay(days[dayView]) }}</th>
+          <th class="info-col"></th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="t in times">
-          <th>{{ formatTime(t) }}</th>
-          <td class="slot" :data-slot-id="findSlotByIndex(dayView,t)?.id" :class="slotClasses(findSlotByIndex(dayView,t))" :style="cellStyle(findSlotByIndex(dayView,t))" @click="onSlotClick(findSlotByIndex(dayView,t), $event)" :data-bs-toggle="slotTitle(findSlotByIndex(dayView,t)) ? 'tooltip' : null" :title="slotTitle(findSlotByIndex(dayView,t))">
-            <button v-if="findSlotByIndex(dayView,t)" type="button" class="btn btn-link btn-sm info-btn" @click.stop="showInfo(findSlotByIndex(dayView,t))"><i class="bi bi-info-circle"></i></button>
-            <span v-if="findSlotByIndex(dayView,t)" class="count">{{ findSlotByIndex(dayView,t).count }}</span>
-            <span v-if="findSlotByIndex(dayView,t) && findSlotByIndex(dayView,t).note" class="note">{{ findSlotByIndex(dayView,t).note }}</span>
-            <span v-if="findSlotByIndex(dayView,t) && findSlotByIndex(dayView,t).note" class="avg">{{ ruleAverages[findSlotByIndex(dayView,t).note] }}</span>
+          <th class="time-col">{{ formatTime(t) }}</th>
+          <td class="slot" :data-slot-id="findSlotByIndex(dayView,t)?.id" :class="slotClasses(findSlotByIndex(dayView,t))" :style="cellStyle(findSlotByIndex(dayView,t))" @click="onSlotClick(findSlotByIndex(dayView,t), $event)">
+            <div class="count" v-if="findSlotByIndex(dayView,t)">{{ findSlotByIndex(dayView,t).count }}</div>
+            <div class="note" v-if="findSlotByIndex(dayView,t) && findSlotByIndex(dayView,t).note">
+              {{ findSlotByIndex(dayView,t).note }}
+              <span class="avg">{{ ruleAverages[findSlotByIndex(dayView,t).note] }}</span>
+            </div>
+          </td>
+          <td class="info-col">
+            <button v-if="findSlotByIndex(dayView,t)" type="button" class="btn btn-link p-0" @click.stop="showInfo(findSlotByIndex(dayView,t))"><i class="bi bi-people"></i></button>
           </td>
         </tr>
       </tbody>

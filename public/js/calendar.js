@@ -13,7 +13,6 @@ createApp({
       extra: 0,
       dayView: null,
       infoSlot: null
-
     };
   },
   computed: {
@@ -22,9 +21,28 @@ createApp({
       start.setHours(0,0,0,0);
       return Array.from({length:28}, (_,i)=>new Date(start.getTime()+i*86400000));
     },
-    weeks() {
-      return Array.from({length:4}, (_,w)=>this.days.slice(w*7, w*7+7));
 
+    months() {
+      const groups = [];
+      let current = null;
+      let arr = [];
+      this.days.forEach((d,idx)=>{
+        const label = d.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+        if(label !== current) {
+          if(arr.length) groups.push({label: current, days: arr});
+          current = label;
+          arr = [];
+        }
+        arr.push({date:d,index:idx});
+      });
+      if(arr.length) groups.push({label: current, days: arr});
+      return groups.map(g=>{
+        const weeks=[];
+        for(let i=0;i<g.days.length;i+=7){
+          weeks.push(g.days.slice(i,i+7));
+        }
+        return {label:g.label,weeks};
+      });
     },
     times() {
       const start = new Date(this.week);
@@ -36,7 +54,6 @@ createApp({
       const end = new Date(start.getTime()+27*86400000);
       const opt = {month:'long', year:'numeric'};
       return `${start.toLocaleDateString(undefined,opt)} - ${end.toLocaleDateString(undefined,opt)}`;
-
     },
     ruleAverages() {
       const groups = {};
@@ -60,7 +77,6 @@ createApp({
         const d=new Date(s.time);
         const idx=Math.floor((d-this.getStartOfWeek())/86400000);
         if(map[idx] !== undefined) map[idx].push(s);
-
       });
       return map;
     },
@@ -92,10 +108,6 @@ createApp({
     setInterval(this.loadSlots, 5000);
   },
   updated() {
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-      bootstrap.Tooltip.getInstance(el)?.dispose();
-      new bootstrap.Tooltip(el, {trigger:'hover'});
-    });
     const bar = document.getElementById('rule-bar');
     if(bar) {
       const style = this.ruleBarStyle();
@@ -135,7 +147,7 @@ createApp({
         if(idx>=0) this.selectedForRule.splice(idx,1);
         else this.selectedForRule.push(slot.id);
         if(event) {
-          const rect = event.target.getBoundingClientRect();
+          const rect = event.currentTarget.getBoundingClientRect();
           this.ruleBarPos = {top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX};
         }
       } else {
