@@ -19,8 +19,16 @@ end
 
 class User < ActiveRecord::Base
   validates :telegram_id, presence: true, uniqueness: true
+  validates :token, uniqueness: true
+  before_create :set_token
   has_many :slot_users, class_name: 'SlotUser'
   has_many :slots, through: :slot_users
+
+  private
+
+  def set_token
+    self.token ||= SecureRandom.hex(10)
+  end
 end
 
 class Slot < ActiveRecord::Base
@@ -37,6 +45,11 @@ helpers do
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
   end
+
+  def admin?
+    ids = (ENV['ADMIN_IDS'] || '').split(',')
+    current_user && ids.include?(current_user.telegram_id.to_s)
+  end
 end
 
 get '/' do
@@ -45,12 +58,10 @@ end
 
 
 get '/auth' do
-  telegram_id = params[:telegram_id]
-  name = params[:name]
-  halt 400 unless telegram_id && name
-  user = User.find_or_create_by(telegram_id: telegram_id) do |u|
-    u.name = name
-  end
+  token = params[:token]
+  halt 400 unless token
+  user = User.find_by(token: token)
+  halt 400 unless user
   session[:user_id] = user.id
   redirect '/calendar'
 end
@@ -76,6 +87,21 @@ get '/calendar' do
   erb :calendar
 end
 
+get '/admin' do
+  halt 403 unless admin?
+  @users = User.order(:name)
+  erb :admin
+end
+
+post '/admin' do
+  halt 403 unless admin?
+  User.find_each do |u|
+    allowed = params["allow_#{u.id}"] == '1'
+    u.update(can_set_rules: allowed)
+  end
+  redirect '/admin'
+end
+
 post '/slots/:id/toggle' do
   halt 401 unless current_user
   payload = request.body.read
@@ -94,7 +120,7 @@ post '/slots/:id/toggle' do
 end
 
 post '/slots/set_rule' do
-  halt 401 unless current_user
+  halt 401 unless current_user&.can_set_rules
   payload = request.body.read
   data = payload.empty? ? {} : JSON.parse(payload)
   ids = data['slot_ids']

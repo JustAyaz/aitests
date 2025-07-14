@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+ActiveRecord::Schema[8.0].define(version: 7) do
 
-ActiveRecord::Schema[8.0].define(version: 5) do
   create_table "slots", force: :cascade do |t|
     t.datetime "time", null: false
     t.datetime "created_at", null: false
@@ -32,6 +32,9 @@ ActiveRecord::Schema[8.0].define(version: 5) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "token"
+    t.boolean "can_set_rules", default: false, null: false
     t.index ["telegram_id"], name: "index_users_on_telegram_id", unique: true
+    t.index ["token"], name: "index_users_on_token", unique: true
   end
 end

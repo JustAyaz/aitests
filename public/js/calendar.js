@@ -11,7 +11,8 @@ createApp({
       selectedForRule: [],
       extra: 0,
       dayView: null,
-      infoSlot: null
+      infoSlot: null,
+      canSetRules: CAN_SET_RULES
     };
   },
   computed: {
@@ -151,7 +152,7 @@ createApp({
       this.ruleText='';
     },
     applyRule() {
-      if(!this.selectedForRule.length) return;
+      if(!this.canSetRules || !this.selectedForRule.length) return;
       fetch('/slots/set_rule', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -181,7 +182,7 @@ createApp({
     },
     ruleBarStyle() {
       return {
-        display: this.ruleMode && this.selectedForRule.length ? 'flex' : 'none'
+        display: this.ruleMode && this.selectedForRule.length && this.canSetRules ? 'flex' : 'none'
       };
     },
     showInfo(slot){
