@@ -1,0 +1,23 @@
+<h1>Calendar</h1>
+<p>Logged in as <%= current_user&.name || 'Guest' %></p>
+<% unless current_user %>
+  <a href="/register">Register</a>
+<% end %>
+<table id="calendar">
+  <% @slots.each do |slot| %>
+    <% users = slot.users %>
+    <tr data-id="<%= slot.id %>">
+      <td><%= slot.time.strftime('%H:%M') %></td>
+      <td class="count"><%= users.count %></td>
+      <td>
+        <% if current_user %>
+          <form action="/slots/<%= slot.id %>/toggle" method="post" style="display:inline;">
+            <button type="submit"<%= ' class="selected"' if users.include?(current_user) %>>Toggle</button>
+          </form>
+        <% end %>
+        <span class="users"><%= users.map(&:name).join(', ') %></span>
+      </td>
+    </tr>
+  <% end %>
+</table>
+<script src="/js/app.js"></script>
