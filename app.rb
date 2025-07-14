@@ -8,13 +8,27 @@ set :database, {adapter: 'sqlite3', database: 'db/development.sqlite3'}
 
 enable :sessions
 
+
+class SlotUser < ActiveRecord::Base
+  self.table_name = 'slots_users'
+  belongs_to :slot
+  belongs_to :user
+end
+
 class User < ActiveRecord::Base
   validates :telegram_id, presence: true, uniqueness: true
+  has_many :slot_users, class_name: 'SlotUser'
+  has_many :slots, through: :slot_users
 end
 
 class Slot < ActiveRecord::Base
   validates :time, presence: true
-  has_and_belongs_to_many :users
+  has_many :slot_users, class_name: 'SlotUser'
+  has_many :users, through: :slot_users
+
+  def participant_count
+    slot_users.sum('1 + extra')
+  end
 end
 
 helpers do
@@ -62,11 +76,15 @@ end
 
 post '/slots/:id/toggle' do
   halt 401 unless current_user
+  payload = request.body.read
+  data = payload.empty? ? {} : JSON.parse(payload)
+  extra = data['extra'].to_i
   slot = Slot.find(params[:id])
-  if slot.users.include?(current_user)
-    slot.users.delete(current_user)
+  su = SlotUser.find_by(slot: slot, user: current_user)
+  if su
+    su.destroy
   else
-    slot.users << current_user
+    SlotUser.create(slot: slot, user: current_user, extra: extra)
   end
   content_type :json
   { success: true }.to_json
@@ -85,14 +103,14 @@ get '/api/slots' do
   content_type :json
   date = params[:week] ? Date.parse(params[:week]) : Date.today
   start_week = date.beginning_of_week
-  slots = Slot.includes(:users).where(time: start_week..(start_week + 7)).order(:time)
+  slots = Slot.includes(slot_users: :user).where(time: start_week..(start_week + 7)).order(:time)
   data = slots.map do |s|
     {
       id: s.id,
       time: s.time,
-      count: s.users.size,
-      users: s.users.map(&:name),
-      selected: current_user ? s.users.include?(current_user) : false,
+      count: s.participant_count,
+      users: s.slot_users.map { |su| su.extra.positive? ? "#{su.user.name} +#{su.extra}" : su.user.name },
+      selected: current_user ? s.slot_users.any? { |su| su.user_id == current_user.id } : false,
       note: s.note
     }
   end

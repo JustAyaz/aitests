@@ -11,7 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 
-ActiveRecord::Schema[8.0].define(version: 4) do
+ActiveRecord::Schema[8.0].define(version: 5) do
   create_table "slots", force: :cascade do |t|
     t.datetime "time", null: false
     t.datetime "created_at", null: false
@@ -22,6 +22,7 @@ ActiveRecord::Schema[8.0].define(version: 4) do
   create_table "slots_users", id: false, force: :cascade do |t|
     t.integer "slot_id"
     t.integer "user_id"
+    t.integer "extra", default: 0, null: false
     t.index ["slot_id"], name: "index_slots_users_on_slot_id"
     t.index ["user_id"], name: "index_slots_users_on_user_id"
   end

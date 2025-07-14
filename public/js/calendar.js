@@ -9,7 +9,8 @@ createApp({
       ruleMode: false,
       ruleText: '',
       selectedForRule: [],
-      ruleBarPos: {top: 0, left: 0}
+      ruleBarPos: {top: 0, left: 0},
+      extra: 0
     };
   },
   computed: {
@@ -43,7 +44,8 @@ createApp({
   },
   updated() {
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-      new bootstrap.Tooltip(el);
+      bootstrap.Tooltip.getInstance(el)?.dispose();
+      new bootstrap.Tooltip(el, {trigger:'hover'});
     });
     const bar = document.getElementById('rule-bar');
     if(bar) {
@@ -82,7 +84,11 @@ createApp({
       }
     },
     toggleSlot(slot) {
-      fetch(`/slots/${slot.id}/toggle`, {method:'POST'})
+      fetch(`/slots/${slot.id}/toggle`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({extra:this.extra})
+      })
         .then(()=>this.loadSlots());
     },
     applyRule() {
@@ -101,7 +107,7 @@ createApp({
     },
     cellStyle(slot) {
       if(!slot) return {};
-      if(slot.note) return {backgroundColor:'#cfe9d6'};
+      if(slot.note) return {backgroundColor:'#d4edda'};
       const max = 5;
       const intensity = Math.min(slot.count, max)/max;
       return {backgroundColor:`rgba(0,123,255,${0.2+intensity*0.6})`};
