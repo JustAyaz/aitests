@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Calendar</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/cerulean/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <header class="bg-primary text-white p-3 mb-4">
+    <div class="container">
+      <h1 class="h3"><%= @calendar ? @calendar.name : 'Telegram Calendar' %></h1>
+      <% if admin? %>
+        <a href="/admin?calendar_id=<%= current_calendar&.id %>" class="btn btn-sm btn-light ms-2">Admin</a>
+      <% end %>
+    </div>
+  </header>
+  <main class="container-fluid mb-5 px-2">
+    <%= yield %>
+  </main>
+  <footer class="bg-light text-center text-muted py-2 mt-auto">
+    made by me, 2025
+  </footer>
+</body>
+</html>

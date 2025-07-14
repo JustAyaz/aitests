@@ -1,0 +1,18 @@
+<h2>Register</h2>
+<form action="/register" method="post">
+  <label>Telegram ID:</label>
+  <input type="text" name="telegram_id" value="<%= @user.telegram_id %>" required>
+  <br>
+  <label>Name:</label>
+  <input type="text" name="name" value="<%= @user.name %>" required>
+  <br>
+  <label>Calendar:</label>
+  <select name="calendar_id">
+    <% Calendar.order(:name).each do |cal| %>
+      <option value="<%= cal.id %>" <%= 'selected' if @user.calendar_id == cal.id %>><%= cal.name %></option>
+    <% end %>
+  </select>
+  <br>
+  <input type="submit" value="Register">
+</form>
+<p>Start the Telegram bot and follow the link it sends you for automatic login.</p>
