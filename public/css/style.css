@@ -1,5 +1,6 @@
 body {
   background-color: #eef7fd;
+  overflow-y: hidden;
 }
 .nav {
   margin-bottom: 1rem;
@@ -49,4 +50,9 @@ table.calendar td.slot .note {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.rule-bar {
+  position: absolute;
+  display: none;
+  z-index: 1000;
+  max-width: 220px;
+}

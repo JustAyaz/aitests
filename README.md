@@ -21,3 +21,4 @@ Telegram bot script can be executed with:
 ```bash
 TELEGRAM_TOKEN=your_token SERVER_URL=http://localhost:4567 ruby bot.rb
 ```
+

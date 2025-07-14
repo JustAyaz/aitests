@@ -8,7 +8,8 @@ createApp({
       slots: [],
       ruleMode: false,
       ruleText: '',
-      selectedForRule: []
+      selectedForRule: [],
+      ruleBarPos: {top: 0, left: 0}
     };
   },
   computed: {
@@ -21,6 +22,19 @@ createApp({
       const start = new Date(this.week);
       start.setHours(8,0,0,0);
       return Array.from({length:20}, (_,i)=>new Date(start.getTime()+i*1800000));
+    },
+    monthLabel() {
+      const d = new Date(this.week);
+      return d.toLocaleDateString(undefined,{month:'long', year:'numeric'});
+    },
+    selectedAvg() {
+      if(!this.selectedForRule.length) return 0;
+      let sum = 0;
+      this.selectedForRule.forEach(id => {
+        const s = this.slots.find(sl=>sl.id===id);
+        if(s) sum += s.count;
+      });
+      return Math.round(sum/this.selectedForRule.length);
     }
   },
   mounted() {
@@ -31,6 +45,11 @@ createApp({
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
       new bootstrap.Tooltip(el);
     });
+    const bar = document.getElementById('rule-bar');
+    if(bar) {
+      const style = this.ruleBarStyle();
+      Object.assign(bar.style, style);
+    }
   },
   methods: {
     formatDay(d) {
@@ -48,12 +67,16 @@ createApp({
         .then(r=>r.json())
         .then(data=>{ this.slots = data; });
     },
-    onSlotClick(slot) {
+    onSlotClick(slot, event) {
       if(!slot) return;
       if(this.ruleMode) {
         const idx = this.selectedForRule.indexOf(slot.id);
         if(idx>=0) this.selectedForRule.splice(idx,1);
         else this.selectedForRule.push(slot.id);
+        if(event) {
+          const rect = event.target.getBoundingClientRect();
+          this.ruleBarPos = {top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX};
+        }
       } else {
         this.toggleSlot(slot);
       }
@@ -72,12 +95,13 @@ createApp({
         this.ruleMode=false;
         this.selectedForRule=[];
         this.ruleText='';
+        this.ruleBarPos={top:0,left:0};
         this.loadSlots();
       });
     },
     cellStyle(slot) {
       if(!slot) return {};
-      if(slot.note) return {backgroundColor:'#d4edda'};
+      if(slot.note) return {backgroundColor:'#cfe9d6'};
       const max = 5;
       const intensity = Math.min(slot.count, max)/max;
       return {backgroundColor:`rgba(0,123,255,${0.2+intensity*0.6})`};
@@ -87,6 +111,13 @@ createApp({
     },
     slotClasses(slot) {
       return { 'rule-select': this.selectedForRule.includes(slot?.id) };
+    },
+    ruleBarStyle() {
+      return {
+        display: this.ruleMode && this.selectedForRule.length ? 'flex' : 'none',
+        top: this.ruleBarPos.top + 'px',
+        left: this.ruleBarPos.left + 'px'
+      };
     }
   }
 }).mount('#calendar-app');
