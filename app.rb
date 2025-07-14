@@ -113,6 +113,7 @@ get '/api/slots' do
   if SLOTS_CACHE[key]
     return SLOTS_CACHE[key]
   end
+
   end_date = start_week + 14
   slots = Slot.includes(slot_users: :user)
               .where('time >= ? AND time < ?', start_week, end_date)

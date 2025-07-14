@@ -122,7 +122,6 @@ createApp({
         const idx = this.selectedForRule.indexOf(slot.id);
         if(idx>=0) this.selectedForRule.splice(idx,1);
         else this.selectedForRule.push(slot.id);
-        // rule bar position fixed at bottom
       } else {
         this.toggleSlot(slot);
       }
