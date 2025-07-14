@@ -45,6 +45,7 @@ table.calendar td.info-col {
   padding: 0;
 }
 table.calendar td.slot .count {
+
   font-size: 1rem;
   font-weight: bold;
   color: #000;
@@ -58,6 +59,7 @@ table.calendar td.slot.rule-select {
 table.calendar td.slot.has-note {
   min-height: calc((100vh - 230px)/19 + 20px);
 }
+
 table.calendar td.slot .note {
   width: 100%;
   border-top: 1px solid #dee2e6;
@@ -83,6 +85,7 @@ table.days th.day-header {
   text-align: center;
   font-weight: bold;
 }
+
 table.days td.day {
   cursor: pointer;
   border: 1px solid #dee2e6;
@@ -119,3 +122,4 @@ table.days td.day.has-rule {
     min-height: 60px;
   }
 }
+
