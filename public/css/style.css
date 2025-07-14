@@ -43,6 +43,7 @@ table.calendar td.time-col {
   white-space: nowrap;
   width: 120px;
 }
+
 table.calendar th.time-col.clickable {
   cursor: pointer;
 }

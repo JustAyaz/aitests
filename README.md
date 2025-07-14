@@ -26,4 +26,5 @@ The bot sends you a personalized link that automatically logs you in via `/auth`
 
 Users receive a unique token in their Telegram link. The `/auth?token=...` endpoint uses this token to create a session without reentering the name. Administrators (IDs listed in `ADMIN_IDS` environment variable) can visit `/admin` to toggle which users are allowed to add rules.
 
+
 The `/api/slots` endpoint caches responses per week and clears the cache when slots change, reducing database load.
