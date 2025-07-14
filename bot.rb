@@ -1,6 +1,10 @@
 require 'telegram/bot'
 require 'securerandom'
 require_relative 'app'
+require 'net/http'
+require 'uri'
+require 'json'
+
 
 TOKEN = ENV['TELEGRAM_TOKEN']
 SERVER_URL = ENV['SERVER_URL'] || 'http://localhost:4567'

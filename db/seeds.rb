@@ -1,5 +1,6 @@
 require './app'
 
+
 Calendar.destroy_all
 User.destroy_all
 Slot.destroy_all
