@@ -22,4 +22,5 @@ Telegram bot script can be executed with:
 TELEGRAM_TOKEN=your_token SERVER_URL=http://localhost:4567 ruby bot.rb
 ```
 
+
 The bot sends you a personalized link that automatically logs you in via `/auth`. Once logged in, a Vue.js powered calendar displays 30‑minute slots with a polished Bootstrap theme. Click a slot to view current participants in a modal window and join or leave that time. Cells darken as more users select the same slot, and navigation links allow you to switch weeks.

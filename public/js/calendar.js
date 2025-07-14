@@ -41,6 +41,7 @@ createApp({
         .then(r=>r.json())
         .then(data=>{ this.slots = data; });
     },
+
     openSlot(slot) {
       if(!slot) return;
       this.activeSlot = slot;
