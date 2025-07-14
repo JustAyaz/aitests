@@ -21,13 +21,6 @@ createApp({
       start.setHours(0,0,0,0);
       return Array.from({length:28}, (_,i)=>new Date(start.getTime()+i*86400000));
     },
-    weeks() {
-      const arr = [];
-      for (let i = 0; i < 4; i++) {
-        arr.push(this.days.slice(i * 7, i * 7 + 7));
-      }
-      return arr;
-    },
     weekdayNames() {
       const start = new Date(this.week);
       start.setHours(0,0,0,0);

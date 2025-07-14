@@ -19,24 +19,19 @@
     <button class="btn btn-primary" @click="applyRule"><i class="bi bi-check"></i></button>
   </div>
   <div v-if="dayView === null">
-    <table class="table table-bordered days">
-      <thead>
-        <tr>
-          <th v-for="d in weekdayNames" class="day-header">{{ d }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(week, wi) in weeks">
-          <td v-for="(day,idx) in week" class="day" @click="openDay(idx + wi*7)" :style="dayStyle(maxPerDay[idx + wi*7])" :class="{'has-rule': maxPerDay[idx + wi*7].note}">
-            <div class="day-info">{{ formatDay(day) }}</div>
-            <div class="day-count">{{ maxPerDay[idx + wi*7].max }}</div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="days-grid">
+      <div v-for="d in weekdayNames" class="day-header">{{ d }}</div>
+      <template v-for="(day, idx) in days">
+        <div class="day" @click="openDay(idx)" :style="dayStyle(maxPerDay[idx])" :class="{'has-rule': maxPerDay[idx].note}">
+          <div class="day-info">{{ formatDay(day) }}</div>
+          <div class="day-count">{{ maxPerDay[idx].max }}</div>
+        </div>
+      </template>
+    </div>
   </div>
-  <div v-else>
+  <div v-else class="day-view">
     <button class="btn btn-sm btn-outline-secondary mb-2" @click="closeDay">&laquo; Back</button>
+    <div class="slots-container">
     <table class="table table-bordered calendar">
       <thead>
         <tr>
@@ -60,6 +55,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <div class="modal fade" id="infoModal" tabindex="-1">
