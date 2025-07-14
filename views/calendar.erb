@@ -1,0 +1,56 @@
+<div id="calendar-app">
+  <p class="mb-1">Logged in as <strong><%= current_user&.name || 'Guest' %></strong></p>
+  <% unless current_user %>
+    <a href="/register" class="btn btn-sm btn-outline-primary mb-2">Register</a>
+  <% end %>
+  <div class="nav">
+    <a class="btn btn-outline-primary btn-sm me-1" :href="'/calendar?week=' + prevWeek">&laquo; Previous</a>
+    <a class="btn btn-outline-primary btn-sm" :href="'/calendar?week=' + nextWeek">Next &raquo;</a>
+  </div>
+  <table class="table table-bordered calendar">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th v-for="d in days">{{ formatDay(d) }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="t in times">
+        <th>{{ formatTime(t) }}</th>
+        <td v-for="d in days" class="slot" :style="cellStyle(findSlot(d,t))" @click="openSlot(findSlot(d,t))">
+          <span v-if="findSlot(d,t)" class="count">{{ findSlot(d,t).count }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="modal fade" id="slotModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content" v-if="activeSlot">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ formatDay(activeSlot.time) }} {{ formatTime(new Date(activeSlot.time)) }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p v-if="activeSlot.users.length">Selected by:</p>
+          <ul class="list-unstyled mb-3">
+            <li v-for="u in activeSlot.users">{{ u }}</li>
+          </ul>
+          <p v-if="!activeSlot.users.length" class="text-muted">Nobody yet.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" @click="toggleSlot(activeSlot)">
+            {{ activeSlot.selected ? 'Leave' : 'Join' }}
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var WEEK = '<%= @start_week %>';
+var PREV_WEEK = '<%= @prev_week %>';
+var NEXT_WEEK = '<%= @next_week %>';
+</script>
+<script src="/js/calendar.js"></script>

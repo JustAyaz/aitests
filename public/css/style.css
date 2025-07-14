@@ -1,0 +1,37 @@
+body {
+  background-color: #eef7fd;
+}
+.nav {
+  margin-bottom: 1rem;
+}
+table.calendar {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+table.calendar th,
+table.calendar td {
+  border: 1px solid #dee2e6;
+  text-align: center;
+  padding: 0.25rem;
+  height: 60px;
+}
+table.calendar th {
+  background-color: #cfe2ff;
+}
+table.calendar td.slot {
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+table.calendar td.slot .count {
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-size: 0.75em;
+  color: #fff;
+}
+table.calendar td.slot:hover {
+  filter: brightness(0.95);
+}
