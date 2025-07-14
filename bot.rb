@@ -10,8 +10,8 @@ Telegram::Bot::Client.run(TOKEN) do |bot|
   bot.listen do |message|
     case message.text
     when '/start'
-      uri = URI("#{SERVER_URL}/register")
-      bot.api.send_message(chat_id: message.chat.id, text: "Welcome, #{message.from.first_name}! Your Telegram ID is #{message.from.id}. Use this ID to register on the website.")
+      link = "#{SERVER_URL}/auth?telegram_id=#{message.from.id}&name=#{URI.encode_www_form_component(message.from.first_name)}"
+      bot.api.send_message(chat_id: message.chat.id, text: "Welcome, #{message.from.first_name}! Open this link to access the calendar: #{link}")
     end
   end
 end

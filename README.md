@@ -21,3 +21,5 @@ Telegram bot script can be executed with:
 ```bash
 TELEGRAM_TOKEN=your_token SERVER_URL=http://localhost:4567 ruby bot.rb
 ```
+
+The bot sends you a personalized link that automatically logs you in via `/auth`. Once logged in, you can browse weeks of 30-minute slots and mark your availability. Use the navigation links above the calendar to switch weeks.
