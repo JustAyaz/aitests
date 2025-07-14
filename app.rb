@@ -97,9 +97,11 @@ end
 
 post '/slots/set_rule' do
   halt 401 unless current_user
-  ids = params[:slot_ids]
-  ids = JSON.parse(ids) if ids.is_a?(String)
-  Slot.where(id: ids).update_all(note: params[:note])
+  payload = request.body.read
+  data = payload.empty? ? {} : JSON.parse(payload)
+  ids = data['slot_ids']
+  note = data['note']
+  Slot.where(id: ids).update_all(note: note)
   SLOTS_CACHE.clear
   content_type :json
   { success: true }.to_json

@@ -18,23 +18,41 @@
     <button class="btn btn-primary" @click="applyRule"><i class="bi bi-check"></i></button>
     <span class="input-group-text" v-if="selectedForRule.length">Avg: {{ selectedAvg }}</span>
   </div>
-  <table class="table table-bordered calendar">
-    <thead>
-      <tr>
-        <th>Time</th>
-        <th v-for="d in days">{{ formatDay(d) }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="t in times">
-        <th>{{ formatTime(t) }}</th>
-        <td v-for="d in days" class="slot" :data-slot-id="findSlot(d,t)?.id" :class="slotClasses(findSlot(d,t))" :style="cellStyle(findSlot(d,t))" @click="onSlotClick(findSlot(d,t), $event)" :data-bs-toggle="slotTitle(findSlot(d,t)) ? 'tooltip' : null" :title="slotTitle(findSlot(d,t))">
-          <span v-if="findSlot(d,t)" class="count">{{ findSlot(d,t).count }}</span>
-          <span v-if="findSlot(d,t) && findSlot(d,t).note" class="note">{{ findSlot(d,t).note }}</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div v-if="dayView === null">
+    <table class="table table-bordered days">
+      <tbody>
+        <tr>
+          <td v-for="(d,i) in days" class="day" @click="openDay(i)" :style="dayStyle(maxPerDay[i])" :class="{'has-rule': maxPerDay[i].note}">
+            <div class="position-relative">
+              <span class="day-label">{{ formatDay(d) }}</span>
+              <span class="count">{{ maxPerDay[i].max }}</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div v-else>
+    <button class="btn btn-sm btn-outline-secondary mb-2" @click="closeDay">&laquo; Back</button>
+    <table class="table table-bordered calendar">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>{{ formatDay(days[dayView]) }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="t in times">
+          <th>{{ formatTime(t) }}</th>
+          <td class="slot" :data-slot-id="findSlotByIndex(dayView,t)?.id" :class="slotClasses(findSlotByIndex(dayView,t))" :style="cellStyle(findSlotByIndex(dayView,t))" @click="onSlotClick(findSlotByIndex(dayView,t), $event)" :data-bs-toggle="slotTitle(findSlotByIndex(dayView,t)) ? 'tooltip' : null" :title="slotTitle(findSlotByIndex(dayView,t))">
+            <span v-if="findSlotByIndex(dayView,t)" class="count">{{ findSlotByIndex(dayView,t).count }}</span>
+            <span v-if="findSlotByIndex(dayView,t) && findSlotByIndex(dayView,t).note" class="note">{{ findSlotByIndex(dayView,t).note }}</span>
+            <span v-if="findSlotByIndex(dayView,t) && findSlotByIndex(dayView,t).note" class="avg">{{ ruleAverages[findSlotByIndex(dayView,t).note] }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 <script>
 var WEEK = '<%= @start_week %>';

@@ -16,7 +16,6 @@ table.calendar td {
   border: 1px solid #dee2e6;
   text-align: center;
   padding: 0.25rem;
-
   height: calc((100vh - 230px)/18);
   font-size: .8rem;
 }
@@ -60,3 +59,39 @@ table.calendar td.slot .note {
   z-index: 1000;
   max-width: 220px;
 }
+
+
+table.days {
+  width: 100%;
+  table-layout: fixed;
+}
+table.days td.day {
+  cursor: pointer;
+  border: 1px solid #dee2e6;
+  background-color: #cfe2ff;
+  position: relative;
+  height: calc((100vh - 230px)/7);
+  text-align: center;
+  vertical-align: middle;
+  transition: background-color 0.3s ease;
+}
+table.days td.day .day-label {
+  font-weight: bold;
+}
+table.days td.day .count {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 0.8rem;
+}
+table.days td.day.has-rule {
+  background-color: #d4edda;
+}
+table.calendar td.slot .avg {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.7rem;
+  color: #000;
+}
+

@@ -10,7 +10,9 @@ createApp({
       ruleText: '',
       selectedForRule: [],
       ruleBarPos: {top: 0, left: 0},
-      extra: 0
+      extra: 0,
+      dayView: null
+
     };
   },
   computed: {
@@ -28,6 +30,42 @@ createApp({
       const d = new Date(this.week);
       return d.toLocaleDateString(undefined,{month:'long', year:'numeric'});
     },
+    ruleAverages() {
+      const groups = {};
+      this.slots.forEach(s=>{
+        if(s.note){
+          if(!groups[s.note]) groups[s.note]={sum:0,count:0};
+          groups[s.note].sum += s.count;
+          groups[s.note].count++;
+        }
+      });
+      const avgs={};
+      Object.keys(groups).forEach(n=>{
+        avgs[n]=Math.round(groups[n].sum/groups[n].count);
+      });
+      return avgs;
+    },
+    slotsByDay() {
+      const map={};
+      this.days.forEach((_,i)=>map[i]=[]);
+      this.slots.forEach(s=>{
+        const d=new Date(s.time);
+        const idx=Math.floor((d-this.getStartOfWeek())/86400000);
+        if(map[idx]) map[idx].push(s);
+      });
+      return map;
+    },
+    maxPerDay() {
+      return this.days.map((_,i)=>{
+        let max=0; let note=false;
+        (this.slotsByDay[i]||[]).forEach(s=>{
+          if(s.count>max) max=s.count;
+          if(s.note) note=true;
+        });
+        return {max, note};
+      });
+    },
+
     selectedAvg() {
       if(!this.selectedForRule.length) return 0;
       let sum = 0;
@@ -54,6 +92,9 @@ createApp({
     }
   },
   methods: {
+    getStartOfWeek(){
+      const d=new Date(this.week); d.setHours(0,0,0,0); return d.getTime();
+    },
     formatDay(d) {
       return new Date(d).toLocaleDateString(undefined,{weekday:'short',day:'numeric'});
     },
@@ -63,6 +104,10 @@ createApp({
     findSlot(day,time) {
       const dt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), time.getHours(), time.getMinutes());
       return this.slots.find(s => new Date(s.time).getTime() === dt.getTime());
+    },
+    findSlotByIndex(dayIndex,time){
+      const day=this.days[dayIndex];
+      return this.findSlot(day,time);
     },
     loadSlots() {
       fetch(`/api/slots?week=${this.week}`)
@@ -90,6 +135,22 @@ createApp({
         body: JSON.stringify({extra:this.extra})
       })
         .then(()=>this.loadSlots());
+    },
+    dayStyle(info){
+      if(!info) return {};
+      if(info.note) return {backgroundColor:'#d4edda'};
+      const max=5;
+      const intensity=Math.min(info.max,max)/max;
+      return {backgroundColor:`rgba(0,123,255,${0.2+intensity*0.6})`};
+    },
+    openDay(i){
+      this.dayView=i;
+    },
+    closeDay(){
+      this.dayView=null;
+      this.ruleMode=false;
+      this.selectedForRule=[];
+      this.ruleText='';
     },
     applyRule() {
       if(!this.selectedForRule.length) return;
