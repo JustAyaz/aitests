@@ -13,6 +13,7 @@ createApp({
       extra: 0,
       dayView: null,
       infoSlot: null
+
     };
   },
   computed: {
@@ -23,6 +24,7 @@ createApp({
     },
     weeks() {
       return Array.from({length:4}, (_,w)=>this.days.slice(w*7, w*7+7));
+
     },
     times() {
       const start = new Date(this.week);
@@ -34,6 +36,7 @@ createApp({
       const end = new Date(start.getTime()+27*86400000);
       const opt = {month:'long', year:'numeric'};
       return `${start.toLocaleDateString(undefined,opt)} - ${end.toLocaleDateString(undefined,opt)}`;
+
     },
     ruleAverages() {
       const groups = {};
@@ -57,6 +60,7 @@ createApp({
         const d=new Date(s.time);
         const idx=Math.floor((d-this.getStartOfWeek())/86400000);
         if(map[idx] !== undefined) map[idx].push(s);
+
       });
       return map;
     },

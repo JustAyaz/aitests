@@ -42,6 +42,7 @@ table.calendar td.slot:hover {
 table.calendar td.slot.rule-select {
   outline: 2px dashed #198754;
 }
+
 table.calendar td.slot .info-btn {
   position: absolute;
   top: 2px;
@@ -51,6 +52,7 @@ table.calendar td.slot .info-btn {
 table.calendar td.slot .note {
   position: absolute;
   bottom: 2px;
+
   left: 2px;
   font-size: 0.7rem;
   color: #0f5132;
@@ -66,6 +68,7 @@ table.calendar td.slot .note {
   max-width: 220px;
 }
 
+
 table.days {
   width: 100%;
   table-layout: fixed;
@@ -76,6 +79,7 @@ table.days td.day {
   background-color: #cfe2ff;
   position: relative;
   height: calc((100vh - 230px)/4);
+
   text-align: center;
   vertical-align: middle;
   transition: background-color 0.3s ease;
@@ -95,6 +99,7 @@ table.days td.day.has-rule {
 table.calendar td.slot .avg {
   position: absolute;
   bottom: 2px;
+
   right: 2px;
   font-size: 0.7rem;
   color: #000;
@@ -110,3 +115,4 @@ table.calendar td.slot .avg {
     font-size: 0.75rem;
   }
 }
+
