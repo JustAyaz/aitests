@@ -1,0 +1,41 @@
+<div id="calendar-app">
+  <p class="mb-1">Logged in as <strong><%= current_user&.name || 'Guest' %></strong></p>
+  <% unless current_user %>
+    <a href="/register" class="btn btn-sm btn-outline-primary mb-2">Register</a>
+  <% end %>
+  <div class="nav d-flex flex-wrap align-items-center">
+    <a class="btn btn-outline-primary btn-sm me-1 mb-1" :href="'/calendar?week=' + prevWeek">&laquo; Previous</a>
+    <a class="btn btn-outline-primary btn-sm me-3 mb-1" :href="'/calendar?week=' + nextWeek">Next &raquo;</a>
+    <button class="btn btn-success btn-sm mb-1" @click="ruleMode=!ruleMode" v-text="ruleMode ? 'Cancel' : 'Add Rule'"></button>
+  </div>
+  <h2 class="h5 text-center mb-2">{{ monthLabel }}</h2>
+  <div id="rule-bar" class="rule-bar input-group input-group-sm" :style="ruleBarStyle()">
+    <input type="text" class="form-control" v-model="ruleText" placeholder="Rule text">
+    <button class="btn btn-primary" @click="applyRule"><i class="bi bi-check"></i></button>
+    <span class="input-group-text" v-if="selectedForRule.length">Avg: {{ selectedAvg }}</span>
+  </div>
+  <table class="table table-bordered calendar">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th v-for="d in days">{{ formatDay(d) }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="t in times">
+        <th>{{ formatTime(t) }}</th>
+        <td v-for="d in days" class="slot" :data-slot-id="findSlot(d,t)?.id" :class="slotClasses(findSlot(d,t))" :style="cellStyle(findSlot(d,t))" @click="onSlotClick(findSlot(d,t), $event)" :data-bs-toggle="slotTitle(findSlot(d,t)) ? 'tooltip' : null" :title="slotTitle(findSlot(d,t))">
+          <span v-if="findSlot(d,t)" class="count">{{ findSlot(d,t).count }}</span>
+          <span v-if="findSlot(d,t) && findSlot(d,t).note" class="note">{{ findSlot(d,t).note }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<script>
+var WEEK = '<%= @start_week %>';
+var PREV_WEEK = '<%= @prev_week %>';
+var NEXT_WEEK = '<%= @next_week %>';
+</script>
+<script src="/js/calendar.js"></script>
