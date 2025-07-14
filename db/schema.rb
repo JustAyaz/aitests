@@ -10,13 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 7) do
+ActiveRecord::Schema[8.0].define(version: 11) do
+  create_table "calendars", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "slots", force: :cascade do |t|
     t.datetime "time", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "note"
+    t.integer "calendar_id"
+    t.index ["calendar_id"], name: "index_slots_on_calendar_id"
   end
 
   create_table "slots_users", id: false, force: :cascade do |t|
@@ -34,6 +41,10 @@ ActiveRecord::Schema[8.0].define(version: 7) do
     t.datetime "updated_at", null: false
     t.string "token"
     t.boolean "can_set_rules", default: false, null: false
+    t.boolean "admin", default: false, null: false
+    t.boolean "superadmin", default: false, null: false
+    t.integer "calendar_id"
+    t.index ["calendar_id"], name: "index_users_on_calendar_id"
     t.index ["telegram_id"], name: "index_users_on_telegram_id", unique: true
     t.index ["token"], name: "index_users_on_token", unique: true
   end

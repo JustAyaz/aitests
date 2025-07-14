@@ -14,9 +14,9 @@
 <body>
   <header class="bg-primary text-white p-3 mb-4">
     <div class="container">
-      <h1 class="h3">Telegram Calendar</h1>
+      <h1 class="h3"><%= @calendar ? @calendar.name : 'Telegram Calendar' %></h1>
       <% if admin? %>
-        <a href="/admin" class="btn btn-sm btn-light ms-2">Admin</a>
+        <a href="/admin?calendar_id=<%= current_calendar&.id %>" class="btn btn-sm btn-light ms-2">Admin</a>
       <% end %>
     </div>
   </header>

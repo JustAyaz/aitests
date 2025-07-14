@@ -1,18 +1,39 @@
-<h2>Admin - Rule Permissions</h2>
-<form method="post" action="/admin">
-<table class="table">
-  <thead>
-    <tr><th>Name</th><th>Telegram ID</th><th>Can Set Rules</th></tr>
-  </thead>
-  <tbody>
-    <% @users.each do |u| %>
-      <tr>
-        <td><%= u.name %></td>
-        <td><%= u.telegram_id %></td>
-        <td><input type="checkbox" name="allow_<%= u.id %>" value="1" <%= 'checked' if u.can_set_rules %>></td>
-      </tr>
+<a href="/calendar" class="btn btn-sm btn-secondary mb-2">Back</a>
+<% if @calendars %>
+  <h2>Calendars</h2>
+  <ul class="list-group mb-3">
+    <% @calendars.each do |c| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span><%= c.name %></span>
+        <a href="/admin?calendar_id=<%= c.id %>" class="btn btn-sm btn-primary">Manage</a>
+      </li>
     <% end %>
-  </tbody>
-</table>
-<button class="btn btn-primary" type="submit">Save</button>
-</form>
+  </ul>
+<% else %>
+  <h2>Manage <%= @calendar.name %></h2>
+  <form method="post" action="/admin?calendar_id=<%= @calendar.id %>">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Telegram ID</th>
+        <% if superadmin? %><th>Admin</th><% end %>
+        <th>Can Set Rules</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |u| %>
+        <tr>
+          <td><%= u.name %></td>
+          <td><%= u.telegram_id %></td>
+          <% if superadmin? %>
+            <td><input type="checkbox" name="admin_<%= u.id %>" value="1" <%= 'checked' if u.admin %>></td>
+          <% end %>
+          <td><input type="checkbox" name="allow_<%= u.id %>" value="1" <%= 'checked' if u.can_set_rules %>></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <button class="btn btn-primary" type="submit">Save</button>
+  </form>
+<% end %>
