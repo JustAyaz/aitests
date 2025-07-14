@@ -3,13 +3,14 @@
   <% unless current_user %>
     <a href="/register" class="btn btn-sm btn-outline-primary mb-2">Register</a>
   <% end %>
-  <div class="nav d-flex flex-wrap align-items-center">
-    <a class="btn btn-outline-primary btn-sm me-1 mb-1" :href="'/calendar?week=' + prevWeek">&laquo; Previous</a>
-    <a class="btn btn-outline-primary btn-sm me-3 mb-1" :href="'/calendar?week=' + nextWeek">Next &raquo;</a>
-    <button class="btn btn-success btn-sm mb-1" @click="ruleMode=!ruleMode" v-text="ruleMode ? 'Cancel' : 'Add Rule'"></button>
-    <div class="ms-auto mb-1 d-flex align-items-center" style="max-width:120px;">
-      <input type="number" min="0" max="10" class="form-control form-control-sm" v-model.number="extra" placeholder="+people">
-    </div>
+  <div class="nav d-flex flex-wrap align-items-center gap-1">
+    <a class="btn btn-outline-primary btn-sm" :href="'/calendar?week=' + prevWeek">&laquo; Previous</a>
+    <a class="btn btn-outline-primary btn-sm" :href="'/calendar?week=' + nextWeek">Next &raquo;</a>
+    <select v-model.number="extra" class="form-select form-select-sm" style="width:auto;">
+      <option :value="0">+0</option>
+      <option v-for="n in 10" :value="n">+{{ n }}</option>
+    </select>
+    <button class="btn btn-success btn-sm" @click="ruleMode=!ruleMode" v-text="ruleMode ? 'Cancel' : 'Add Rule'"></button>
   </div>
   <h2 class="h5 text-center mb-2">{{ monthLabel }}</h2>
   <div id="rule-bar" class="rule-bar input-group input-group-sm" :style="ruleBarStyle()">

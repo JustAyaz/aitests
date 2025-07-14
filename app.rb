@@ -9,6 +9,10 @@ set :database, {adapter: 'sqlite3', database: 'db/development.sqlite3'}
 enable :sessions
 
 
+# simple in-memory cache for slot data per week
+SLOTS_CACHE = {}
+
+
 class SlotUser < ActiveRecord::Base
   self.table_name = 'slots_users'
   belongs_to :slot
@@ -82,10 +86,11 @@ post '/slots/:id/toggle' do
   slot = Slot.find(params[:id])
   su = SlotUser.find_by(slot: slot, user: current_user)
   if su
-    su.destroy
+    SlotUser.where(slot: slot, user: current_user).delete_all
   else
     SlotUser.create(slot: slot, user: current_user, extra: extra)
   end
+  SLOTS_CACHE.clear
   content_type :json
   { success: true }.to_json
 end
@@ -95,6 +100,7 @@ post '/slots/set_rule' do
   ids = params[:slot_ids]
   ids = JSON.parse(ids) if ids.is_a?(String)
   Slot.where(id: ids).update_all(note: params[:note])
+  SLOTS_CACHE.clear
   content_type :json
   { success: true }.to_json
 end
@@ -103,6 +109,10 @@ get '/api/slots' do
   content_type :json
   date = params[:week] ? Date.parse(params[:week]) : Date.today
   start_week = date.beginning_of_week
+  key = start_week.to_s
+  if SLOTS_CACHE[key]
+    return SLOTS_CACHE[key]
+  end
   slots = Slot.includes(slot_users: :user).where(time: start_week..(start_week + 7)).order(:time)
   data = slots.map do |s|
     {
@@ -113,6 +123,7 @@ get '/api/slots' do
       selected: current_user ? s.slot_users.any? { |su| su.user_id == current_user.id } : false,
       note: s.note
     }
-  end
-  json data
+  end.to_json
+  SLOTS_CACHE[key] = data
+  data
 end

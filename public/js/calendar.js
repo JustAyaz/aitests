@@ -21,8 +21,8 @@ createApp({
     },
     times() {
       const start = new Date(this.week);
-      start.setHours(8,0,0,0);
-      return Array.from({length:20}, (_,i)=>new Date(start.getTime()+i*1800000));
+      start.setHours(15,0,0,0);
+      return Array.from({length:18}, (_,i)=>new Date(start.getTime()+i*1800000));
     },
     monthLabel() {
       const d = new Date(this.week);
