@@ -21,6 +21,7 @@ createApp({
       start.setHours(0,0,0,0);
       return Array.from({length:28}, (_,i)=>new Date(start.getTime()+i*86400000));
     },
+
     months() {
       const groups = [];
       let current = null;

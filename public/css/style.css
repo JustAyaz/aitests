@@ -18,6 +18,7 @@ table.calendar td {
   padding: 0.25rem;
   font-size: .8rem;
   vertical-align: middle;
+
 }
 table.calendar th {
   background-color: #cfe2ff;
@@ -42,6 +43,7 @@ table.calendar td.info-col {
   vertical-align: middle;
 }
 table.calendar td.slot .count {
+
   font-size: 1rem;
   font-weight: bold;
   color: #000;
@@ -52,6 +54,7 @@ table.calendar td.slot:hover {
 table.calendar td.slot.rule-select {
   outline: 2px dashed #198754;
 }
+
 table.calendar td.slot .info-btn {
   position: absolute;
   top: 2px;
@@ -64,6 +67,7 @@ table.calendar td.slot .note {
   font-size: 0.7rem;
   color: #0f5132;
   padding-top: 2px;
+
 }
 
 .rule-bar {
@@ -95,13 +99,16 @@ table.days td.day .day-info {
 table.days td.day .day-count {
   font-size: 0.8rem;
   margin-top: 2px;
+
 }
 table.days td.day.has-rule {
   background-color: #8fbc8f;
 }
 table.calendar td.slot .avg {
+
   font-size: 0.7rem;
   margin-left: 4px;
+
   color: #000;
 }
 
@@ -115,3 +122,4 @@ table.calendar td.slot .avg {
     font-size: 0.75rem;
   }
 }
+
