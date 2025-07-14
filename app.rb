@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'sinatra/json'
 require 'telegram/bot'
+require 'date'
 
 set :database, {adapter: 'sqlite3', database: 'db/development.sqlite3'}
 
@@ -26,8 +27,20 @@ get '/' do
   redirect '/calendar'
 end
 
+
+get '/auth' do
+  telegram_id = params[:telegram_id]
+  name = params[:name]
+  halt 400 unless telegram_id && name
+  user = User.find_or_create_by(telegram_id: telegram_id) do |u|
+    u.name = name
+  end
+  session[:user_id] = user.id
+  redirect '/calendar'
+end
+
 get '/register' do
-  @user = current_user || User.new
+  @user = current_user || User.new(telegram_id: params[:telegram_id], name: params[:name])
   erb :register
 end
 
@@ -40,7 +53,13 @@ post '/register' do
 end
 
 get '/calendar' do
-  @slots = Slot.order(:time).all
+  date = params[:week] ? Date.parse(params[:week]) : Date.today
+  @start_week = date.beginning_of_week
+  @prev_week = @start_week - 7
+  @next_week = @start_week + 7
+  @slots = Slot.includes(:users).where(time: @start_week..(@start_week + 7)).order(:time)
+  @slot_hash = @slots.index_by { |s| s.time }
+
   erb :calendar
 end
 
@@ -57,7 +76,10 @@ end
 
 get '/api/slots' do
   content_type :json
-  slots = Slot.includes(:users).order(:time)
+  date = params[:week] ? Date.parse(params[:week]) : Date.today
+  start_week = date.beginning_of_week
+  slots = Slot.includes(:users).where(time: start_week..(start_week + 7)).order(:time)
+
   data = slots.map { |s| { id: s.id, time: s.time, count: s.users.size, users: s.users.map(&:name) } }
   json data
 end
