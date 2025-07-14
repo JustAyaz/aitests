@@ -1,0 +1,32 @@
+<div id="calendar-app">
+  <p>Logged in as <%= current_user&.name || 'Guest' %></p>
+  <% unless current_user %>
+    <a href="/register">Register</a>
+  <% end %>
+  <div class="nav">
+    <a :href="'/calendar?week=' + prevWeek">&laquo; Previous</a> |
+    <a :href="'/calendar?week=' + nextWeek">Next &raquo;</a>
+  </div>
+  <table class="calendar">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th v-for="d in days">{{ formatDay(d) }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="t in times">
+        <th>{{ formatTime(t) }}</th>
+        <td v-for="d in days" class="slot" :style="cellStyle(findSlot(d,t))" @click="toggle(findSlot(d,t))">
+          <span v-if="findSlot(d,t)" class="count">{{ findSlot(d,t).count }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<script>
+var WEEK = '<%= @start_week %>';
+var PREV_WEEK = '<%= @prev_week %>';
+var NEXT_WEEK = '<%= @next_week %>';
+</script>
+<script src="/js/calendar.js"></script>
