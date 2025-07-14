@@ -5,7 +5,8 @@ createApp({
       week: WEEK,
       prevWeek: PREV_WEEK,
       nextWeek: NEXT_WEEK,
-      slots: []
+      slots: [],
+      activeSlot: null
     };
   },
   computed: {
@@ -26,10 +27,10 @@ createApp({
   },
   methods: {
     formatDay(d) {
-      return d.toLocaleDateString(undefined,{weekday:'short',day:'numeric'});
+      return new Date(d).toLocaleDateString(undefined,{weekday:'short',day:'numeric'});
     },
     formatTime(t) {
-      return t.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
+      return new Date(t).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
     },
     findSlot(day, time) {
       const dt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), time.getHours(), time.getMinutes());
@@ -40,7 +41,13 @@ createApp({
         .then(r=>r.json())
         .then(data=>{ this.slots = data; });
     },
-    toggle(slot) {
+
+    openSlot(slot) {
+      if(!slot) return;
+      this.activeSlot = slot;
+      new bootstrap.Modal(document.getElementById('slotModal')).show();
+    },
+    toggleSlot(slot) {
       if(!slot) return;
       fetch(`/slots/${slot.id}/toggle`, {method:'POST'})
         .then(()=>this.loadSlots());
@@ -53,6 +60,14 @@ createApp({
     },
     selected(slot) {
       return slot && slot.selected;
+    }
+  },
+  watch: {
+    slots() {
+      if(this.activeSlot) {
+        const updated = this.slots.find(s=>s.id===this.activeSlot.id);
+        if(updated) this.activeSlot = updated;
+      }
     }
   }
 }).mount('#calendar-app');
