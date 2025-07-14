@@ -8,8 +8,10 @@ set :database, {adapter: 'sqlite3', database: 'db/development.sqlite3'}
 
 enable :sessions
 
+
 # simple in-memory cache for slot data per week
 SLOTS_CACHE = {}
+
 
 class SlotUser < ActiveRecord::Base
   self.table_name = 'slots_users'

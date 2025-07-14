@@ -60,6 +60,7 @@ table.calendar td.slot .note {
   max-width: 220px;
 }
 
+
 table.days {
   width: 100%;
   table-layout: fixed;
@@ -93,3 +94,4 @@ table.calendar td.slot .avg {
   font-size: 0.7rem;
   color: #000;
 }
+

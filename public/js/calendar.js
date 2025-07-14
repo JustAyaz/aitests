@@ -12,6 +12,7 @@ createApp({
       ruleBarPos: {top: 0, left: 0},
       extra: 0,
       dayView: null
+
     };
   },
   computed: {
@@ -64,6 +65,7 @@ createApp({
         return {max, note};
       });
     },
+
     selectedAvg() {
       if(!this.selectedForRule.length) return 0;
       let sum = 0;
