@@ -8,6 +8,7 @@ set :database, {adapter: 'sqlite3', database: 'db/development.sqlite3'}
 
 enable :sessions
 
+
 class SlotUser < ActiveRecord::Base
   self.table_name = 'slots_users'
   belongs_to :slot
