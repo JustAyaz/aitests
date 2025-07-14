@@ -71,8 +71,8 @@ end
 get '/calendar' do
   date = params[:week] ? Date.parse(params[:week]) : Date.today
   @start_week = date.beginning_of_week
-  @prev_week = @start_week - 28
-  @next_week = @start_week + 28
+  @prev_week = @start_week - 14
+  @next_week = @start_week + 14
   erb :calendar
 end
 
@@ -113,7 +113,8 @@ get '/api/slots' do
   if SLOTS_CACHE[key]
     return SLOTS_CACHE[key]
   end
-  end_date = start_week + 28
+
+  end_date = start_week + 14
   slots = Slot.includes(slot_users: :user)
               .where('time >= ? AND time < ?', start_week, end_date)
               .order(:time)

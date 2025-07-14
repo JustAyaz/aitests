@@ -19,7 +19,7 @@ createApp({
     days() {
       const start = new Date(this.week);
       start.setHours(0,0,0,0);
-      return Array.from({length:28}, (_,i)=>new Date(start.getTime()+i*86400000));
+      return Array.from({length:14}, (_,i)=>new Date(start.getTime()+i*86400000));
     },
     weekdayNames() {
       const start = new Date(this.week);
@@ -37,7 +37,7 @@ createApp({
     },
     monthLabel() {
       const start = new Date(this.week);
-      const end = new Date(start.getTime()+27*86400000);
+      const end = new Date(start.getTime()+13*86400000);
       const opt = {month:'long', year:'numeric'};
       return `${start.toLocaleDateString(undefined,opt)} - ${end.toLocaleDateString(undefined,opt)}`;
     },
@@ -45,9 +45,10 @@ createApp({
       const map={};
       this.days.forEach((_,i)=>map[i]=[]);
       this.slots.forEach(s=>{
-        const d=new Date(s.time);
-        const idx=Math.floor((d-this.getStartOfWeek())/86400000);
-        if(map[idx] !== undefined) map[idx].push(s);
+        const d = new Date(s.time);
+        let idx = Math.floor((d - this.getStartOfWeek()) / 86400000);
+        if(d.getHours() === 0 && d.getMinutes() === 0) idx -= 1;
+        if(idx >= 0 && map[idx] !== undefined) map[idx].push(s);
       });
       return map;
     },
@@ -81,7 +82,7 @@ createApp({
       const d=new Date(this.week); d.setHours(0,0,0,0); return d.getTime();
     },
     formatDay(d) {
-      return new Date(d).toLocaleDateString(undefined,{day:'numeric',month:'numeric',weekday:'short'});
+      return new Date(d).toLocaleDateString(undefined,{day:'numeric',month:'numeric'});
     },
     formatDayFull(d) {
       return new Date(d).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'numeric'});
@@ -125,7 +126,7 @@ createApp({
         else this.selectedForRule.push(slot.id);
         if(event) {
           const rect = event.currentTarget.getBoundingClientRect();
-          this.ruleBarPos = {top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX};
+          this.ruleBarPos = {top: rect.bottom + 4, left: rect.right + 4};
         }
       } else {
         this.toggleSlot(slot);
