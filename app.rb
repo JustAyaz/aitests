@@ -8,8 +8,6 @@ set :database, {adapter: 'sqlite3', database: 'db/development.sqlite3'}
 
 enable :sessions
 
-
-# simple in-memory cache for slot data per week
 SLOTS_CACHE = {}
 
 
@@ -73,8 +71,9 @@ end
 get '/calendar' do
   date = params[:week] ? Date.parse(params[:week]) : Date.today
   @start_week = date.beginning_of_week
-  @prev_week = @start_week - 7
-  @next_week = @start_week + 7
+  @prev_week = @start_week - 28
+  @next_week = @start_week + 28
+
   erb :calendar
 end
 
@@ -111,11 +110,15 @@ get '/api/slots' do
   content_type :json
   date = params[:week] ? Date.parse(params[:week]) : Date.today
   start_week = date.beginning_of_week
-  key = start_week.to_s
+  key = "range_#{start_week}"
   if SLOTS_CACHE[key]
     return SLOTS_CACHE[key]
   end
-  slots = Slot.includes(slot_users: :user).where(time: start_week..(start_week + 7)).order(:time)
+  end_date = start_week + 28
+  slots = Slot.includes(slot_users: :user)
+              .where('time >= ? AND time < ?', start_week, end_date)
+              .order(:time)
+
   data = slots.map do |s|
     {
       id: s.id,

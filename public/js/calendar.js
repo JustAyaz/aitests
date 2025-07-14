@@ -11,7 +11,8 @@ createApp({
       selectedForRule: [],
       ruleBarPos: {top: 0, left: 0},
       extra: 0,
-      dayView: null
+      dayView: null,
+      infoSlot: null
 
     };
   },
@@ -19,7 +20,11 @@ createApp({
     days() {
       const start = new Date(this.week);
       start.setHours(0,0,0,0);
-      return Array.from({length:7}, (_,i)=>new Date(start.getTime()+i*86400000));
+      return Array.from({length:28}, (_,i)=>new Date(start.getTime()+i*86400000));
+    },
+    weeks() {
+      return Array.from({length:4}, (_,w)=>this.days.slice(w*7, w*7+7));
+
     },
     times() {
       const start = new Date(this.week);
@@ -27,8 +32,11 @@ createApp({
       return Array.from({length:18}, (_,i)=>new Date(start.getTime()+i*1800000));
     },
     monthLabel() {
-      const d = new Date(this.week);
-      return d.toLocaleDateString(undefined,{month:'long', year:'numeric'});
+      const start = new Date(this.week);
+      const end = new Date(start.getTime()+27*86400000);
+      const opt = {month:'long', year:'numeric'};
+      return `${start.toLocaleDateString(undefined,opt)} - ${end.toLocaleDateString(undefined,opt)}`;
+
     },
     ruleAverages() {
       const groups = {};
@@ -51,7 +59,8 @@ createApp({
       this.slots.forEach(s=>{
         const d=new Date(s.time);
         const idx=Math.floor((d-this.getStartOfWeek())/86400000);
-        if(map[idx]) map[idx].push(s);
+        if(map[idx] !== undefined) map[idx].push(s);
+
       });
       return map;
     },
@@ -65,7 +74,6 @@ createApp({
         return {max, note};
       });
     },
-
     selectedAvg() {
       if(!this.selectedForRule.length) return 0;
       let sum = 0;
@@ -74,6 +82,9 @@ createApp({
         if(s) sum += s.count;
       });
       return Math.round(sum/this.selectedForRule.length);
+    },
+    infoUsers() {
+      return this.infoSlot ? this.infoSlot.users : [];
     }
   },
   mounted() {
@@ -99,7 +110,10 @@ createApp({
       return new Date(d).toLocaleDateString(undefined,{weekday:'short',day:'numeric'});
     },
     formatTime(t) {
-      return new Date(t).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
+      const start = new Date(t);
+      const end = new Date(t.getTime()+30*60*1000);
+      const opts = {hour:'2-digit', minute:'2-digit', hour12:false};
+      return `${start.toLocaleTimeString([],opts)}-${end.toLocaleTimeString([],opts)}`;
     },
     findSlot(day,time) {
       const dt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), time.getHours(), time.getMinutes());
@@ -138,7 +152,7 @@ createApp({
     },
     dayStyle(info){
       if(!info) return {};
-      if(info.note) return {backgroundColor:'#d4edda'};
+      if(info.note) return {backgroundColor:'#8fbc8f'};
       const max=5;
       const intensity=Math.min(info.max,max)/max;
       return {backgroundColor:`rgba(0,123,255,${0.2+intensity*0.6})`};
@@ -168,7 +182,7 @@ createApp({
     },
     cellStyle(slot) {
       if(!slot) return {};
-      if(slot.note) return {backgroundColor:'#d4edda'};
+      if(slot.note) return {backgroundColor:'#8fbc8f'};
       const max = 5;
       const intensity = Math.min(slot.count, max)/max;
       return {backgroundColor:`rgba(0,123,255,${0.2+intensity*0.6})`};
@@ -185,6 +199,11 @@ createApp({
         top: this.ruleBarPos.top + 'px',
         left: this.ruleBarPos.left + 'px'
       };
+    },
+    showInfo(slot){
+      this.infoSlot = slot;
+      const modal = new bootstrap.Modal(document.getElementById('infoModal'));
+      modal.show();
     }
   }
 }).mount('#calendar-app');
