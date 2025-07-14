@@ -28,6 +28,15 @@ createApp({
       }
       return arr;
     },
+    weekdayNames() {
+      const start = new Date(this.week);
+      start.setHours(0,0,0,0);
+      const opts = { weekday: 'short' };
+      return Array.from({length:7}, (_,i)=>{
+        const d = new Date(start.getTime()+i*86400000);
+        return d.toLocaleDateString(undefined, opts);
+      });
+    },
     times() {
       const start = new Date(this.week);
       start.setHours(15,0,0,0);
@@ -93,8 +102,12 @@ createApp({
       return `${startStr}-${end.toLocaleTimeString([],opts)}`;
     },
     findSlot(day,time) {
-      const dt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), time.getHours(), time.getMinutes());
-      return this.slots.find(s => new Date(s.time).getTime() === dt.getTime());
+      const d = new Date(day);
+      d.setHours(time.getHours(), time.getMinutes(), 0, 0);
+      if(time.getDate() !== day.getDate()) {
+        d.setDate(d.getDate() + 1);
+      }
+      return this.slots.find(s => new Date(s.time).getTime() === d.getTime());
     },
     findSlotByIndex(dayIndex,time){
       const day=this.days[dayIndex];
@@ -174,7 +187,10 @@ createApp({
       return slot && slot.users.length ? slot.users.join(', ') : '';
     },
     slotClasses(slot) {
-      return { 'rule-select': this.selectedForRule.includes(slot?.id) };
+      return {
+        'rule-select': this.selectedForRule.includes(slot?.id),
+        'has-note': !!slot?.note
+      };
     },
     ruleBarStyle() {
       return {

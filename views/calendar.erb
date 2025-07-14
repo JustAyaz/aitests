@@ -6,19 +6,25 @@
   <div class="nav d-flex flex-wrap align-items-center gap-1" v-if="dayView === null">
     <a class="btn btn-outline-primary btn-sm" :href="'/calendar?week=' + prevWeek">&laquo; Previous 4 weeks</a>
     <a class="btn btn-outline-primary btn-sm" :href="'/calendar?week=' + nextWeek">Next 4 weeks &raquo;</a>
+  </div>
+  <div class="nav d-flex flex-wrap align-items-center gap-1" v-if="dayView !== null">
     <select v-model.number="extra" class="form-select form-select-sm" style="width:auto;">
       <option :value="0">+0</option>
       <option v-for="n in 10" :value="n">+{{ n }}</option>
     </select>
     <button class="btn btn-success btn-sm" @click="ruleMode=!ruleMode" v-text="ruleMode ? 'Cancel' : 'Add Rule'"></button>
   </div>
-  <h2 class="h5 text-center mb-2">{{ monthLabel }}</h2>
   <div id="rule-bar" class="rule-bar input-group input-group-sm" :style="ruleBarStyle()">
     <input type="text" class="form-control" v-model="ruleText" placeholder="Rule text">
     <button class="btn btn-primary" @click="applyRule"><i class="bi bi-check"></i></button>
   </div>
   <div v-if="dayView === null">
     <table class="table table-bordered days">
+      <thead>
+        <tr>
+          <th v-for="d in weekdayNames" class="day-header">{{ d }}</th>
+        </tr>
+      </thead>
       <tbody>
         <tr v-for="(week, wi) in weeks">
           <td v-for="(day,idx) in week" class="day" @click="openDay(idx + wi*7)" :style="dayStyle(maxPerDay[idx + wi*7])" :class="{'has-rule': maxPerDay[idx + wi*7].note}">
@@ -56,18 +62,18 @@
     </table>
   </div>
 
-</div>
-<div class="modal fade" id="infoModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Participants</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <ul class="list-unstyled mb-0">
-          <li v-for="u in infoUsers" :key="u">{{ u }}</li>
-        </ul>
+  <div class="modal fade" id="infoModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Participants</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-unstyled mb-0">
+            <li v-for="u in infoUsers" :key="u">{{ u }}</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
