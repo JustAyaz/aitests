@@ -72,6 +72,7 @@ post '/slots/:id/toggle' do
   { success: true }.to_json
 end
 
+
 post '/slots/set_rule' do
   halt 401 unless current_user
   ids = params[:slot_ids]
