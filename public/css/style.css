@@ -16,6 +16,7 @@ table.calendar td {
   border: 1px solid #dee2e6;
   text-align: center;
   padding: 0.25rem;
+
   height: calc((100vh - 230px)/18);
   font-size: .8rem;
 }
