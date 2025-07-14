@@ -1,0 +1,11 @@
+<h1>Register</h1>
+<form action="/register" method="post">
+  <label>Telegram ID:</label>
+  <input type="text" name="telegram_id" value="<%= @user.telegram_id %>" required>
+  <br>
+  <label>Name:</label>
+  <input type="text" name="name" value="<%= @user.name %>" required>
+  <br>
+  <input type="submit" value="Register">
+</form>
+<p>Start the Telegram bot and get your ID via /start.</p>
