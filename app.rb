@@ -59,6 +59,7 @@ get '/calendar' do
   @next_week = @start_week + 7
   @slots = Slot.includes(:users).where(time: @start_week..(@start_week + 7)).order(:time)
   @slot_hash = @slots.index_by { |s| s.time }
+
   erb :calendar
 end
 
@@ -78,6 +79,7 @@ get '/api/slots' do
   date = params[:week] ? Date.parse(params[:week]) : Date.today
   start_week = date.beginning_of_week
   slots = Slot.includes(:users).where(time: start_week..(start_week + 7)).order(:time)
+
   data = slots.map { |s| { id: s.id, time: s.time, count: s.users.size, users: s.users.map(&:name) } }
   json data
 end
