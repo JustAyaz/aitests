@@ -21,54 +21,23 @@ createApp({
       start.setHours(0,0,0,0);
       return Array.from({length:28}, (_,i)=>new Date(start.getTime()+i*86400000));
     },
-
-    months() {
-      const groups = [];
-      let current = null;
-      let arr = [];
-      this.days.forEach((d,idx)=>{
-        const label = d.toLocaleDateString(undefined,{month:'long',year:'numeric'});
-        if(label !== current) {
-          if(arr.length) groups.push({label: current, days: arr});
-          current = label;
-          arr = [];
-        }
-        arr.push({date:d,index:idx});
-      });
-      if(arr.length) groups.push({label: current, days: arr});
-      return groups.map(g=>{
-        const weeks=[];
-        for(let i=0;i<g.days.length;i+=7){
-          weeks.push(g.days.slice(i,i+7));
-        }
-        return {label:g.label,weeks};
-      });
+    weeks() {
+      const arr = [];
+      for (let i = 0; i < 4; i++) {
+        arr.push(this.days.slice(i * 7, i * 7 + 7));
+      }
+      return arr;
     },
     times() {
       const start = new Date(this.week);
       start.setHours(15,0,0,0);
-      return Array.from({length:18}, (_,i)=>new Date(start.getTime()+i*1800000));
+      return Array.from({length:19}, (_,i)=>new Date(start.getTime()+i*1800000));
     },
     monthLabel() {
       const start = new Date(this.week);
       const end = new Date(start.getTime()+27*86400000);
       const opt = {month:'long', year:'numeric'};
       return `${start.toLocaleDateString(undefined,opt)} - ${end.toLocaleDateString(undefined,opt)}`;
-    },
-    ruleAverages() {
-      const groups = {};
-      this.slots.forEach(s=>{
-        if(s.note){
-          if(!groups[s.note]) groups[s.note]={sum:0,count:0};
-          groups[s.note].sum += s.count;
-          groups[s.note].count++;
-        }
-      });
-      const avgs={};
-      Object.keys(groups).forEach(n=>{
-        avgs[n]=Math.round(groups[n].sum/groups[n].count);
-      });
-      return avgs;
     },
     slotsByDay() {
       const map={};
@@ -90,15 +59,6 @@ createApp({
         return {max, note};
       });
     },
-    selectedAvg() {
-      if(!this.selectedForRule.length) return 0;
-      let sum = 0;
-      this.selectedForRule.forEach(id => {
-        const s = this.slots.find(sl=>sl.id===id);
-        if(s) sum += s.count;
-      });
-      return Math.round(sum/this.selectedForRule.length);
-    },
     infoUsers() {
       return this.infoSlot ? this.infoSlot.users : [];
     }
@@ -119,13 +79,18 @@ createApp({
       const d=new Date(this.week); d.setHours(0,0,0,0); return d.getTime();
     },
     formatDay(d) {
-      return new Date(d).toLocaleDateString(undefined,{weekday:'short',day:'numeric'});
+      return new Date(d).toLocaleDateString(undefined,{day:'numeric',month:'numeric',weekday:'short'});
+    },
+    formatDayFull(d) {
+      return new Date(d).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'numeric'});
     },
     formatTime(t) {
       const start = new Date(t);
       const end = new Date(t.getTime()+30*60*1000);
       const opts = {hour:'2-digit', minute:'2-digit', hour12:false};
-      return `${start.toLocaleTimeString([],opts)}-${end.toLocaleTimeString([],opts)}`;
+      const startStr = start.toLocaleTimeString([],opts);
+      if(startStr === '00:00') return '00:00+';
+      return `${startStr}-${end.toLocaleTimeString([],opts)}`;
     },
     findSlot(day,time) {
       const dt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), time.getHours(), time.getMinutes());
@@ -138,7 +103,13 @@ createApp({
     loadSlots() {
       fetch(`/api/slots?week=${this.week}`)
         .then(r=>r.json())
-        .then(data=>{ this.slots = data; });
+        .then(data=>{
+          this.slots = data;
+          if(this.infoSlot){
+            const updated = this.slots.find(s=>s.id===this.infoSlot.id);
+            if(updated) this.infoSlot = updated;
+          }
+        });
     },
     onSlotClick(slot, event) {
       if(!slot) return;
